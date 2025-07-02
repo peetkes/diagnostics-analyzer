@@ -5,7 +5,6 @@
                 name="main">
     
     <p:option name="input-dir" select="'stats_ops/'" as="xs:string"/>
-    <p:option name="filter-type" select="'basic'" as="xs:string"/>
     <p:option name="output-dir" select="'output/ops'" as="xs:string"/>
     <p:option name="file-pattern" select="'.*\.xml$'" as="xs:string"/>
         
@@ -31,7 +30,7 @@
         <p:load href="{$input-path}"/>
         <!-- 3.2 Process XML file -->
         <p:choose>
-            <p:when test="matches($filename,'allMessageVPNStats')">
+            <p:when test="matches($filename,'MessageVPN')">
                 <p:xslt name="analyze_message_vpn">
                     <p:with-input port="stylesheet">
                         <p:document href="xslt/analyze-message-vpn.xsl"/>
@@ -39,7 +38,7 @@
                     <p:with-option name="parameters" select="map{'filename': $filename}"/>
                 </p:xslt>
             </p:when>
-            <p:when test="matches($filename,'allMessageSpoolStats')">
+            <p:when test="matches($filename,'MessageSpool')">
                 <p:xslt name="analyze_message_spool">
                     <p:with-input port="stylesheet">
                         <p:document href="xslt/analyze-message-spool.xsl"/>
@@ -47,7 +46,7 @@
                     <p:with-option name="parameters" select="map{'filename': $filename}"/>
                 </p:xslt>
             </p:when>
-            <p:when test="matches($filename,'allQueueStats')">
+            <p:when test="matches($filename,'Queue')">
                 <p:xslt name="analyze_queue">
                     <p:with-input port="stylesheet">
                         <p:document href="xslt/analyze-queue.xsl"/>
@@ -55,7 +54,7 @@
                     <p:with-option name="parameters" select="map{'filename': $filename}"/>
                 </p:xslt>
             </p:when>
-            <p:when test="matches($filename,'allClientStats')">
+            <p:when test="matches($filename,'Client')">
                 <p:xslt name="analyze_client">
                     <p:with-input port="stylesheet">
                         <p:document href="xslt/analyze-client.xsl"/>

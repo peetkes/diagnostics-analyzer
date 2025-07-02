@@ -17,7 +17,7 @@
             </ss:DocumentProperties>
             
             <!-- File Summary Sheet -->
-            <ss:Worksheet ss:Name="File Summary">
+            <ss:Worksheet ss:Name="MessageVPN Summary">
                 <ss:Table>
                     <ss:Row>
                         <ss:Cell><ss:Data ss:Type="String">Message VPN</ss:Data></ss:Cell>
