@@ -1,0 +1,92 @@
+<p:declare-step xmlns:p="http://www.w3.org/ns/xproc"
+                xmlns:c="http://www.w3.org/ns/xproc-step"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                version="3.0"
+                name="main">
+    
+    <p:option name="input-dir" select="'stats_ops/'" as="xs:string"/>
+    <p:option name="filter-type" select="'basic'" as="xs:string"/>
+    <p:option name="output-dir" select="'output/ops'" as="xs:string"/>
+    <p:option name="file-pattern" select="'.*\.xml$'" as="xs:string"/>
+        
+    <p:output port="result"/>
+    
+    <!-- Create output directory if it doesn't exist -->
+    <p:file-mkdir href="{$output-dir}"/>
+    
+    <!-- 1. List XML files in folder -->
+    <!--p:directory-list name="list-files">
+        <p:with-option name="path" select="$input-dir"/>
+        <p:with-option name="include-filter" select="'.*\.xml$'"/>
+    </p:directory-list-->    
+    <p:directory-list name="list-files" path="{$input-dir}" include-filter="{$file-pattern}"/>
+       
+    <!-- 2. Load all XML files -->
+    <p:for-each name="load-each">
+        <p:with-input select="//c:file" pipe="result@list-files"/>
+        <p:variable name="filename" select="replace(/*/@name,'#','%23')" as="xs:string"/>
+        <p:variable name="input-path" select="concat($input-dir, $filename)" as="xs:string"/>
+        
+        <!-- 3.1. Load XML files -->
+        <p:load href="{$input-path}"/>
+        <!-- 3.2 Process XML file -->
+        <p:choose>
+            <p:when test="matches($filename,'allMessageVPNStats')">
+                <p:xslt name="analyze_message_vpn">
+                    <p:with-input port="stylesheet">
+                        <p:document href="xslt/analyze-message-vpn.xsl"/>
+                    </p:with-input>
+                    <p:with-option name="parameters" select="map{'filename': $filename}"/>
+                </p:xslt>
+            </p:when>
+            <p:when test="matches($filename,'allMessageSpoolStats')">
+                <p:xslt name="analyze_message_spool">
+                    <p:with-input port="stylesheet">
+                        <p:document href="xslt/analyze-message-spool.xsl"/>
+                    </p:with-input>
+                    <p:with-option name="parameters" select="map{'filename': $filename}"/>
+                </p:xslt>
+            </p:when>
+            <p:when test="matches($filename,'allQueueStats')">
+                <p:xslt name="analyze_queue">
+                    <p:with-input port="stylesheet">
+                        <p:document href="xslt/analyze-queue.xsl"/>
+                    </p:with-input>
+                    <p:with-option name="parameters" select="map{'filename': $filename}"/>
+                </p:xslt>
+            </p:when>
+            <p:when test="matches($filename,'allClientStats')">
+                <p:xslt name="analyze_client">
+                    <p:with-input port="stylesheet">
+                        <p:document href="xslt/analyze-client.xsl"/>
+                    </p:with-input>
+                    <p:with-option name="parameters" select="map{'filename': $filename}"/>
+                </p:xslt>
+            </p:when>
+            <p:otherwise>
+                <p:identity>
+                    <p:with-input port="source">
+                        <p:inline>
+                            <non-existing/>
+                        </p:inline>
+                    </p:with-input>
+                </p:identity>
+            </p:otherwise>
+        </p:choose>
+    </p:for-each>
+    
+    <!-- 4. Wrap results in overview element -->
+    <p:wrap-sequence wrapper="overview"/>
+    
+    <!-- Optional: Store to file -->
+    <p:store href="{$output-dir}/overview.xml"/>
+    
+    <p:xslt name="convert-to-excel">
+        <p:with-input port="stylesheet">
+            <p:document href="xslt/generate-excel-format.xsl"/>
+        </p:with-input>
+    </p:xslt>
+    <!-- Optional: Store to file -->
+    <p:store href="{$output-dir}/overview-excel.xml"/>
+    
+</p:declare-step>

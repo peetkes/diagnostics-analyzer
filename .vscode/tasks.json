@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "xslt",
+			"label": "xslt: Queue Analysis",
+			"saxonJar": "${config:XSLT.tasks.saxonJar}",
+			"xsltFile": "${workspaceFolder}/xslt/analyze-queue.xsl",
+			"xmlSource": "${file}",
+			"resultPath": "${workspaceFolder}/xsl-out/result1.xml",
+			"allowSyntaxExtensions40": "off",
+			"messageEscaping": "adaptive",
+			"group": {
+				"kind": "build"
+			},
+			"problemMatcher": [
+				"$saxon-xslt"
+			],
+            "parameters": [
+                { "name": "filename", "value": "${relativeFile}"}
+            ]
+		}
+	]
+}
