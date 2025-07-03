@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$#" -ne 5 ]; then
-	echo 'Execute command by passing username, password and management IP, e.g.: ./getStatistics.sh http appliance-ip 80 admin <password>'
+	echo 'Execute command by passing username, password and management IP, e.g.: ./getStatistics.sh http appliance-ip 80 admin <password> brokername'
 	exit 1
 fi
 XMLLINT_INSTALLED=true
@@ -22,9 +22,10 @@ MIP=$2
 PORT=$3
 USERNAME=$4
 PASS=$5
+BROKER=$6
 
 DATE_WITH_TIME=`date "+%Y%m%d-%H%M%S"`
-OUTPUT_DIR=stats/$DATE_WITH_TIME
+OUTPUT_DIR=stats_$BROKER/$DATE_WITH_TIME
 
 URL="$PROTOCOL://$MIP:$PORT/SEMP"
 
@@ -46,7 +47,7 @@ MESSAGE_SPOOL_STATS="<rpc><show><message-spool><stats/></message-spool></show></
 curl $OPTION -d $CLIENT_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/ClientStats.xml"
 curl $OPTION -d $MESSAGE_VPN_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/MessageVPNStats.xml"
 curl $OPTION -d $QUEUE_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/QueueStats.xml"
-curl $OPTION -d $MESSAGE_SPOOL_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/MessageSpoolStats.xml"
+curl $OPTION -d $MESSAGE_SPOOL_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/MessageSpoolTotalStats.xml"
 
 # get array of vpn names
 INPUT_FILE="${OUTPUT_DIR}/MessageVPNStats.xml"
@@ -63,4 +64,6 @@ done
 for vpn_name in "${VPN_NAMES[@]}"; do
 	MESSAGE_SPOOL_STATS="<rpc><show><message-spool><vpn-name>${vpn_name}</vpn-name><stats/></message-spool></show></rpc>"
 	curl $OPTION -d $MESSAGE_SPOOL_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/MessageSpoolStats_${vpn_name}.xml"
+	MESSAGE_SPOOL_INFO="<rpc><show><message-spool><vpn-name>${vpn_name}</vpn-name></message-spool></show></rpc>"
+	curl $OPTION -d $MESSAGE_SPOOL_INFO -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/MessageSpoolInfo_${vpn_name}.xml"
 done

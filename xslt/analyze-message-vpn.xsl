@@ -31,7 +31,7 @@
         </vpn-info>
     </xsl:template>
     
-    <xsl:template match="name|enabled|connections|max-connections|connections-service-smf|connections-service-web|connections-service-rest-incoming|connections-service-mqtt|onnections-service-amqp|connections-service-rest-outgoing|total-unique-subscriptions|max-subscriptions" mode="filtered">
+    <xsl:template match="name|enabled|connections|max-connections|connections-service-smf|connections-service-web|connections-service-rest-incoming|connections-service-mqtt|connections-service-amqp|connections-service-rest-outgoing|total-unique-subscriptions|max-subscriptions" mode="filtered">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()" mode="filtered"/>
         </xsl:copy>
