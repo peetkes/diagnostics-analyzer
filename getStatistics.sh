@@ -43,11 +43,13 @@ CLIENT_STATS="<rpc><show><client><name>*</name><vpn-name>*</vpn-name><stats/></c
 MESSAGE_VPN_STATS="<rpc><show><message-vpn><vpn-name>*</vpn-name><stats/></message-vpn></show></rpc>"
 QUEUE_STATS="<rpc><show><queue><name>*</name><vpn-name>*</vpn-name><stats/></queue></show></rpc>"
 MESSAGE_SPOOL_STATS="<rpc><show><message-spool><stats/></message-spool></show></rpc>"
+MESSAGE_SPOOL_DETAIL="<rpc><show><message-spool><detail/></message-spool></show></rpc>"
 
 curl $OPTION -d $CLIENT_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/ClientStats.xml"
 curl $OPTION -d $MESSAGE_VPN_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/MessageVPNStats.xml"
 curl $OPTION -d $QUEUE_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/QueueStats.xml"
 curl $OPTION -d $MESSAGE_SPOOL_STATS -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/MessageSpoolTotalStats.xml"
+curl $OPTION -d $MESSAGE_SPOOL_DETAIL -u $USERNAME:$PASS $URL >> "${OUTPUT_DIR}/MessageSpoolDetail.xml"
 
 # get array of vpn names
 INPUT_FILE="${OUTPUT_DIR}/MessageVPNStats.xml"
